@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Send, Search, MessageSquare, ArrowLeft, Loader2 } from 'lucide-react';
 import { useChat } from '../hooks/useChat.js';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
 
-export const ChatPage = ({ currentUser, allUsers }) => {
+export const ChatPage = () => {
+    const { currentUser, users: allUsers } = useWorkspace();
     const [activePartnerId, setActivePartnerId] = useState('');
     const [typedMessage, setTypedMessage] = useState('');
     const [searchSidebarQuery, setSearchSidebarQuery] = useState('');
@@ -25,9 +27,10 @@ export const ChatPage = ({ currentUser, allUsers }) => {
     // Set default partner
     useEffect(() => {
         if (!activePartnerId && connectionsForChat[0]) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setActivePartnerId(connectionsForChat[0].id);
         }
-    }, [connectionsForChat.length]);
+    }, [activePartnerId, connectionsForChat]);
 
     const activePartner = (allUsers || []).find(u => u.id === activePartnerId) || connectionsForChat[0];
 

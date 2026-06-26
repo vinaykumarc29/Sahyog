@@ -1,8 +1,30 @@
 import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import api from '../api/axios.js';
 import { SkillTag, OpenToLearnBadge } from '../components/BadgesAndTags';
 import { Code2, BriefcaseBusiness, ExternalLink, BookOpen, MapPin, Sparkles, Settings, ArrowLeft, MessageSquare, Calendar } from 'lucide-react';
 
-export const ProfilePage = ({ viewingUser, currentUser, allUsers, allTeams, onBackToDashboard, onInitiateChat, onToggleConnection, onEditProfileTrigger }) => {
+export const ProfilePage = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { currentUser, users: allUsers, teams: allTeams, reloadWorkspace } = useWorkspace();
+    const viewingUser = allUsers.find(u => u.id === id) || (currentUser.id === id ? currentUser : null);
+    const onBackToDashboard = () => navigate('/dashboard');
+    const onInitiateChat = () => navigate('/chat');
+    const onEditProfileTrigger = () => navigate('/profile/edit');
+    const onToggleConnection = async (targetUserId) => {
+        const targetId = targetUserId || viewingUser.id;
+        if (targetId !== currentUser.id) {
+            if ((currentUser.connections || []).includes(targetId)) {
+                await api.delete(`/api/users/connect/${targetId}`);
+            } else {
+                await api.post(`/api/users/connect/${targetId}`);
+            }
+        }
+        await reloadWorkspace();
+    };
+    if (!viewingUser) { navigate('/dashboard'); return null; }
     const isSelf = viewingUser.id === currentUser.id;
     // Retrieve full details of connections
     const connectedUsers = (allUsers || []).filter(u => (viewingUser.connections || []).includes(u.id));

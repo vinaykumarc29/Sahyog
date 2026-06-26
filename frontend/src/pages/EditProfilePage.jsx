@@ -1,7 +1,30 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import api from '../api/axios.js';
+import { normalizeUser } from '../api/mappers.js';
 import { SkillTag } from '../components/BadgesAndTags';
 import { Code2, BriefcaseBusiness, Check, ArrowLeft, ToggleLeft, ToggleRight } from 'lucide-react';
-export const EditProfilePage = ({ currentUser, onSaveProfile, onCancel }) => {
+export const EditProfilePage = () => {
+    const navigate = useNavigate();
+    const { currentUser } = useWorkspace();
+    const { login } = useAuth();
+    const onCancel = () => navigate(`/profile/${currentUser.id}`);
+    const onSaveProfile = async (profile) => {
+        const res = await api.put('/api/users/profile', {
+            name: profile.name,
+            college: profile.college,
+            bio: profile.bio,
+            skillsToTeach: profile.skillsToTeach,
+            skillsToLearn: profile.skillsToLearn,
+            openToLearnAll: profile.isOpenToLearnAnything,
+            githubUrl: profile.github,
+            linkedinUrl: profile.linkedin,
+        });
+        login(localStorage.getItem('token'), normalizeUser(res.data));
+        navigate(`/profile/${currentUser.id}`);
+    };
     const [name, setName] = useState(currentUser.name);
     const [bio, setBio] = useState(currentUser.bio);
     const [college, setCollege] = useState(currentUser.college);

@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import { useMatches } from '../hooks/useMatches.js';
+import api from '../api/axios.js';
 import { MatchScoreBadge, OpenToLearnBadge } from '../components/BadgesAndTags';
 import { Search, Sparkles, UserPlus, Check, MapPin, SlidersHorizontal } from 'lucide-react';
-export const MatchesPage = ({ currentUser, allUsers, onConnectTrigger, onViewProfile }) => {
+export const MatchesPage = () => {
+    const navigate = useNavigate();
+    const { currentUser, users, reloadWorkspace } = useWorkspace();
+    const { matches } = useMatches();
+    const allUsers = matches.length > 0 ? matches.map(m => ({ ...m.user, _serverScore: m.score })) : users;
+    const onConnectTrigger = async (id) => { await api.post(`/api/users/connect/${id}`); await reloadWorkspace(); };
+    const onViewProfile = (id) => navigate(`/profile/${id}`);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCollege, setSelectedCollege] = useState('All');
     const [onlyOpenToLearnAll, setOnlyOpenToLearnAll] = useState(false);

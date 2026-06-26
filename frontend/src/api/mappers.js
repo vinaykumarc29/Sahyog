@@ -1,18 +1,15 @@
-const fallbackAvatar =
-  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
-
 export const normalizeUser = (user = {}) => {
   const id = user._id || user.id;
   return {
     ...user,
     id,
     _id: id,
-   avatar:
-  user.avatarUrl ||
-  user.avatar ||
-  `https://ui-avatars.com/api/?name=${encodeURIComponent(
-  (user.name || 'U')[0]
-)}&background=4648D4&color=fff&size=200`,
+    avatar:
+      user.avatarUrl ||
+      user.avatar ||
+      `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        (user.name || 'U')[0]
+      )}&background=4648D4&color=fff&size=200`,
     github: user.githubUrl || user.github || '',
     linkedin: user.linkedinUrl || user.linkedin || '',
     skillsToTeach: user.skillsToTeach || [],

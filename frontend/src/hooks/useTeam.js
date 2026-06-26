@@ -26,6 +26,7 @@ export const useTeam = (teamId) => {
   }, [teamId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTeam();
   }, [fetchTeam]);
 

@@ -1,6 +1,14 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import api from '../api/axios.js';
 import { MatchScoreBadge, OpenToLearnBadge } from '../components/BadgesAndTags';
-export const SearchResultsPage = ({ searchQuery, allUsers, allTeams, currentUser, onConnectTrigger, onViewProfile, onViewTeam }) => {
+export const SearchResultsPage = ({ searchQuery }) => {
+    const navigate = useNavigate();
+    const { currentUser, users: allUsers, teams: allTeams, reloadWorkspace } = useWorkspace();
+    const onConnectTrigger = async (id) => { await api.post(`/api/users/connect/${id}`); await reloadWorkspace(); };
+    const onViewProfile = (id) => navigate(`/profile/${id}`);
+    const onViewTeam = (id) => navigate(`/teams/${id}`);
     const [activeTab, setActiveTab] = useState('users');
     const query = searchQuery.toLowerCase();
     // Search filter

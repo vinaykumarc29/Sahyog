@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
 import { Search, Plus, Users, SlidersHorizontal } from 'lucide-react';
-export const TeamFinderPage = ({ allTeams, onViewTeamDetail, onNavigateToCreateTeam }) => {
+export const TeamFinderPage = () => {
+    const navigate = useNavigate();
+    const { teams: allTeams } = useWorkspace();
+    const onViewTeamDetail = (id) => navigate(`/teams/${id}`);
+    const onNavigateToCreateTeam = () => navigate('/teams/create');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedHackathon, setSelectedHackathon] = useState('All');
     const [onlyOpenPositions, setOnlyOpenPositions] = useState(false);

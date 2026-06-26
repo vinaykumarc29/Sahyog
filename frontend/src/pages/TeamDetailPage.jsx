@@ -1,12 +1,35 @@
 import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import { useTeam } from '../hooks/useTeam.js';
+import api from '../api/axios.js';
+import { approveApplicantApi, rejectApplicantApi } from '../api/teamApi.js';
 import { Users, Calendar, ArrowLeft, AlertCircle, Send, UserCheck } from 'lucide-react';
 
-export const TeamDetailPage = ({ team, currentUser, allUsers, onBack, onApplySubmit, onHandleApplication }) => {
-    const isOwner = team.ownerId === currentUser.id;
-    const isMember = (team.members || []).includes(currentUser.id);
+export const TeamDetailPage = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { currentUser, users: allUsers } = useWorkspace();
+    const { team, loading, error, refetch } = useTeam(id);
     const [showApplyPanel, setShowApplyPanel] = useState(false);
     const [coverLetter, setCoverLetter] = useState('');
     const [applyError, setApplyError] = useState('');
+
+    if (loading) return <div className="min-h-screen grid place-items-center text-xs text-text-secondary">Loading team...</div>;
+    if (error || !team) {
+        // use useEffect for navigation side-effect to avoid impure render, or just return null and let wrapper handle error
+        return <div className="min-h-screen grid place-items-center text-xs text-red-500">Team not found or error occurred.</div>;
+    }
+
+    const onBack = () => navigate('/teams');
+    const onApplySubmit = async (message) => { await api.post(`/api/teams/${id}/apply`, { message }); await refetch(); };
+    const onHandleApplication = async (applicantUserId, action) => {
+        if (action === 'approved') await approveApplicantApi(id, applicantUserId);
+        else if (action === 'rejected') await rejectApplicantApi(id, applicantUserId);
+        await refetch();
+    };
+    const isOwner = team.ownerId === currentUser.id;
+    const isMember = (team.members || []).includes(currentUser.id);
 
     // Find actual user models for current members
     const memberUsers = (allUsers || []).filter(u => (team.members || []).includes(u.id));

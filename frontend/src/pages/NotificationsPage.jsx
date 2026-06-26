@@ -1,6 +1,26 @@
 import React from 'react';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import api from '../api/axios.js';
 import { Bell, UserPlus, FileCheck, MessageSquare } from 'lucide-react';
-export const NotificationsPage = ({ notifications, allUsers, onMarkAllAsRead, onClearAll, onAcceptConnection, onRejectConnection, setActiveTab }) => {
+export const NotificationsPage = () => {
+    const { currentUser, users: allUsers, reloadWorkspace } = useWorkspace();
+    const onAcceptConnection = async (senderId) => { await api.put(`/api/users/connect/${senderId}/accept`); await reloadWorkspace(); };
+    const onRejectConnection = async (senderId) => { await api.put(`/api/users/connect/${senderId}/reject`); await reloadWorkspace(); };
+    const notifications = (currentUser?.pendingRequests || []).map(reqId => {
+        const sender = allUsers.find(u => u.id === reqId);
+        return {
+            id: `conn-${reqId}`,
+            type: 'connection_request',
+            title: 'Connection Request',
+            message: sender ? `${sender.name} wants to connect with you` : 'Someone wants to connect with you',
+            senderId: reqId,
+            isRead: false,
+            timestamp: 'Recently',
+        };
+    });
+    const onMarkAllAsRead = () => {};
+    const onClearAll = () => {};
+    const setActiveTab = () => {};
     const getIconForType = (type) => {
         switch (type) {
             case 'connection_request':

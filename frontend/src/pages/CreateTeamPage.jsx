@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../api/axios.js';
 import { Sparkles, Users, ArrowLeft, Check } from 'lucide-react';
-export const CreateTeamPage = ({ onPublishTeam, onCancel }) => {
+export const CreateTeamPage = () => {
+    const navigate = useNavigate();
+    const onCancel = () => navigate('/teams');
+    const onPublishTeam = async (team) => {
+        await api.post('/api/teams', {
+            name: team.name, tagline: team.tagline, hackathonName: team.hackathonName,
+            theme: team.theme, eventDate: team.eventDate, description: team.description,
+            requiredSkills: team.requiredSkills, maxSize: team.maxSize,
+        });
+        navigate('/teams');
+    };
     const [name, setName] = useState('');
     const [tagline, setTagline] = useState('');
     const [description, setDescription] = useState('');

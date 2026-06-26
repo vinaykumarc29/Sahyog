@@ -1,12 +1,44 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import api from '../api/axios.js';
+import { getUnreadCountApi } from '../api/messageApi.js';
 import { TRENDING_SKILLS } from '../data';
-import {Link} from "react-router-dom"
 import { StatCard, MatchScoreBadge, OpenToLearnBadge } from '../components/BadgesAndTags';
 import { Compass, Users, Sparkles, MessageSquare, Plus, ArrowRight, UserPlus, Check, Flame } from 'lucide-react';
-export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, activePosts, setActiveTab, onAcceptConnection, onRejectConnection, onTriggerCreateTeam, unreadCount = 0, lastMessageAt = null }) => {
+export const Dashboard = () => {
+    const navigate = useNavigate();
+    const { currentUser, users: allUsers, teams: allTeams, reloadWorkspace } = useWorkspace();
+    const [unreadCount, setUnreadCount] = useState(0);
+    const [lastMessageAt, setLastMessageAt] = useState(null);
+    useEffect(() => {
+        getUnreadCountApi()
+            .then(res => { setUnreadCount(res.data.count ?? 0); setLastMessageAt(res.data.lastMessageAt ?? null); })
+            .catch(() => {});
+    }, []);
+    const setActiveTab = (tab) => {
+        if (tab === 'matches') navigate('/matches');
+        else if (tab === 'teams') navigate('/teams');
+        else if (tab.startsWith('profile-')) navigate(`/profile/${tab.replace('profile-', '')}`);
+        else if (tab.startsWith('team-')) navigate(`/teams/${tab.replace('team-', '')}`);
+    };
+    const onAcceptConnection = async (id) => {
+        if ((currentUser.pendingRequests || []).includes(id)) {
+            await api.put(`/api/users/connect/${id}/accept`);
+        } else {
+            await api.post(`/api/users/connect/${id}`);
+        }
+        await reloadWorkspace();
+    };
+    const onRejectConnection = async (id) => {
+        await api.put(`/api/users/connect/${id}/reject`);
+        await reloadWorkspace();
+    };
+    const onTriggerCreateTeam = () => navigate('/teams/create');
     // Format a relative time string from an ISO date
     const formatLastSeen = (isoDate) => {
         if (!isoDate) return 'No messages yet';
+        // eslint-disable-next-line react-hooks/purity
         const diffMs = Date.now() - new Date(isoDate).getTime();
         const diffMin = Math.floor(diffMs / 60000);
         if (diffMin < 1)  return 'Just now';
@@ -18,7 +50,6 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
 
     // Calculate some analytics
     const connectionCount = currentUser.connections.length;
-    const requestsCount = currentUser.pendingRequests.length;
     const matchPercentageAverage = 94; // static aesthetic display
     // Filter out current user and already connected users for recommendations
     const recommendedUsers = allUsers
@@ -28,6 +59,7 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
     const suggestedTeams = allTeams.slice(0, 2);
     // Filter incoming connection requests
     const incomingRequests = allUsers.filter(u => currentUser.pendingRequests.includes(u.id));
+
     return (<div className="max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8 font-sans pb-24 lg:pb-8">
       
       {/* 1. Welcome Header Section */}
@@ -44,9 +76,9 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
             <h1 className="text-3xl lg:text-4xl font-extrabold font-display leading-tight">
               Welcome back, {currentUser.name}!
             </h1>
-            <p className="text-white/70 text-sm max-w-xl">
+            {/* <p className="text-white/70 text-sm max-w-xl">
               You are currently synced with <b>{currentUser.college}</b>. There are 14 new peer matches and 3 hackathons starting this week!
-            </p>
+            </p> */}
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -64,16 +96,15 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
 
       {/* 2. Statistical Highlights */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-         <Link to='/matches'>
-        <StatCard icon={<Users className="w-5.5 h-5.5"/>} label="Active Connections" value={connectionCount} change="+2 connected this week"/>
-         </Link>
-
+        <Link to='/matches'>
+          <StatCard icon={<Users className="w-5.5 h-5.5"/>} label="Active Connections" value={connectionCount} change="+2 connected this week"/>
+        </Link>
         <StatCard icon={<Sparkles className="w-5.5 h-5.5"/>} label="Overlap Match Level" value={`${matchPercentageAverage}%`} change="Top 5% on campus"/>
         <Link to='/teams'>
-        <StatCard icon={<Compass className="w-5.5 h-5.5"/>} label="Team Collaborations" value={allTeams.filter(t => t.members.includes(currentUser.id)).length} change="1 application pending"/>
+          <StatCard icon={<Compass className="w-5.5 h-5.5"/>} label="Team Collaborations" value={allTeams.filter(t => t.members.includes(currentUser.id)).length} change="1 application pending"/>
         </Link>
         <Link to='/chat'>
-        <StatCard icon={<MessageSquare className="w-5.5 h-5.5"/>} label="Unread Messages" value={unreadCount} change={formatLastSeen(lastMessageAt)} isPositive={false}/>
+          <StatCard icon={<MessageSquare className="w-5.5 h-5.5"/>} label="Unread Messages" value={unreadCount} change={formatLastSeen(lastMessageAt)} isPositive={false}/>
         </Link>
       </div>
 
@@ -132,6 +163,7 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
               {recommendedUsers.map((user) => {
             // Compute skill overlaps for UI matching indicator
             const teachOverlap = user.skillsToTeach.filter(s => currentUser.skillsToLearn.includes(s));
+            // eslint-disable-next-line no-unused-vars
             const learnOverlap = user.skillsToLearn.filter(s => currentUser.skillsToTeach.includes(s));
             const score = teachOverlap.length > 0 ? 88 : 72; // simulated high-fidelity match scores
             const isSent = (currentUser.sentRequests || []).includes(user.id);
