@@ -7,7 +7,12 @@ export const normalizeUser = (user = {}) => {
     ...user,
     id,
     _id: id,
-    avatar: user.avatarUrl || user.avatar || fallbackAvatar,
+   avatar:
+  user.avatarUrl ||
+  user.avatar ||
+  `https://ui-avatars.com/api/?name=${encodeURIComponent(
+  (user.name || 'U')[0]
+)}&background=4648D4&color=fff&size=200`,
     github: user.githubUrl || user.github || '',
     linkedin: user.linkedinUrl || user.linkedin || '',
     skillsToTeach: user.skillsToTeach || [],

@@ -70,7 +70,7 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
           </div>
 
           {/* Social Proof Stats badge */}
-          <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-text-secondary">
+          {/* <div className="pt-4 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-text-secondary">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-success-custom"/>
               <span className="text-sm font-semibold">12,000+ Active Students</span>
@@ -79,7 +79,7 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
               <CheckCircle className="w-5 h-5 text-success-custom"/>
               <span className="text-sm font-semibold">450+ Hackathons Synced</span>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* 3D Flat Illustration Container */}
@@ -271,7 +271,7 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
       </section>
 
       {/* 4. STATISTICS WRAPPER */}
-      <section className="bg-primary-indigo text-white py-16 px-6 relative z-10 rounded-[48px] max-w-7xl mx-auto shadow-2xl shadow-indigo-900/10 overflow-hidden mb-24">
+      {/* <section className="bg-primary-indigo text-white py-16 px-6 relative z-10 rounded-[48px] max-w-7xl mx-auto shadow-2xl shadow-indigo-900/10 overflow-hidden mb-24">
         <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-accent-cyan/15 blur-[120px]"/>
         <div className="absolute bottom-0 left-0 w-80 h-80 rounded-full bg-white/5 blur-[80px]"/>
 
@@ -293,10 +293,10 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
             <p className="text-white/80 text-xs font-semibold tracking-wider uppercase mt-2">Learning Speed Increase</p>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* 5. TESTIMONIALS */}
-      <section className="py-20 bg-white border-t border-outline-custom/10 relative z-10">
+      {/* <section className="py-20 bg-white border-t border-outline-custom/10 relative z-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl lg:text-4xl font-extrabold text-text-primary tracking-tight font-display">
@@ -332,7 +332,7 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
               </div>))}
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* 6. CALL TO ACTION SECTION */}
       <section className="py-24 px-6 text-center max-w-4xl mx-auto relative z-10 space-y-8">

@@ -46,17 +46,17 @@ export const EditProfilePage = ({ currentUser, onSaveProfile, onCancel }) => {
         });
     };
     // Avatar cycle simulation
-    const cycleAvatar = () => {
-        const avatars = [
-            'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-            'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200',
-            'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200',
-            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
-        ];
-        const currentIndex = avatars.indexOf(avatar);
-        const nextIndex = (currentIndex + 1) % avatars.length;
-        setAvatar(avatars[nextIndex]);
-    };
+    // const cycleAvatar = () => {
+    //     const avatars = [
+    //         'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    //         'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200',
+    //         'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200',
+    //         'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    //     ];
+    //     const currentIndex = avatars.indexOf(avatar);
+    //     const nextIndex = (currentIndex + 1) % avatars.length;
+    //     setAvatar(avatars[nextIndex]);
+    // };
     return (<div className="max-w-3xl mx-auto px-4 lg:px-8 py-8 space-y-8 font-sans pb-24 lg:pb-8">
       
       {/* Back button */}
@@ -79,9 +79,9 @@ export const EditProfilePage = ({ currentUser, onSaveProfile, onCancel }) => {
             <img src={avatar} alt="Avatar Profile" className="w-16 h-16 rounded-full object-cover border border-outline-custom/25 shadow-sm"/>
             <div>
               <p className="text-xs font-bold text-text-primary">Avatar Representative</p>
-              <button type="button" onClick={cycleAvatar} className="mt-1.5 px-3 py-1.5 bg-white border border-outline-custom/30 hover:border-primary-indigo hover:text-primary-indigo rounded-full text-[10px] font-black tracking-wide uppercase transition-colors">
+              {/* <button type="button" onClick={cycleAvatar} className="mt-1.5 px-3 py-1.5 bg-white border border-outline-custom/30 hover:border-primary-indigo hover:text-primary-indigo rounded-full text-[10px] font-black tracking-wide uppercase transition-colors">
                 Cycle Avatar Image
-              </button>
+              </button> */}
             </div>
           </div>
 

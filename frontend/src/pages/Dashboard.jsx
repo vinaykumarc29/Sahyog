@@ -1,5 +1,6 @@
 import React from 'react';
 import { TRENDING_SKILLS } from '../data';
+import {Link} from "react-router-dom"
 import { StatCard, MatchScoreBadge, OpenToLearnBadge } from '../components/BadgesAndTags';
 import { Compass, Users, Sparkles, MessageSquare, Plus, ArrowRight, UserPlus, Check, Flame } from 'lucide-react';
 export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, activePosts, setActiveTab, onAcceptConnection, onRejectConnection, onTriggerCreateTeam, unreadCount = 0, lastMessageAt = null }) => {
@@ -63,10 +64,17 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
 
       {/* 2. Statistical Highlights */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+         <Link to='/matches'>
         <StatCard icon={<Users className="w-5.5 h-5.5"/>} label="Active Connections" value={connectionCount} change="+2 connected this week"/>
+         </Link>
+
         <StatCard icon={<Sparkles className="w-5.5 h-5.5"/>} label="Overlap Match Level" value={`${matchPercentageAverage}%`} change="Top 5% on campus"/>
+        <Link to='/teams'>
         <StatCard icon={<Compass className="w-5.5 h-5.5"/>} label="Team Collaborations" value={allTeams.filter(t => t.members.includes(currentUser.id)).length} change="1 application pending"/>
+        </Link>
+        <Link to='/chat'>
         <StatCard icon={<MessageSquare className="w-5.5 h-5.5"/>} label="Unread Messages" value={unreadCount} change={formatLastSeen(lastMessageAt)} isPositive={false}/>
+        </Link>
       </div>
 
       {/* 3. Grid Structure for Main Dashboard widgets */}
