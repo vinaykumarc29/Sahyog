@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 
 const teamSchema = new mongoose.Schema({
+  name:           { type: String, required: true },
+  tagline:        { type: String, default: '' },
   hackathonName:  { type: String, required: true },
   theme:          { type: String, default: '' },
   eventDate:      { type: Date },

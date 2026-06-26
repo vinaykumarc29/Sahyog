@@ -8,14 +8,30 @@ const generateToken = (id) =>
 export const register = async (req, res) => {
   try {
 
-    const { name, email, password, gender, college, skillsToTeach, skillsToLearn, openToLearnAll } = req.body;
+    const {
+      name,
+      email,
+      password,
+      gender,
+      college,
+      bio,
+      avatarUrl,
+      skillsToTeach,
+      skillsToLearn,
+      openToLearnAll,
+      githubUrl,
+      linkedinUrl,
+    } = req.body;
     const exists = await User.findOne({ email });
     if (exists) return res.status(400).json({ message: 'Email already registered' });
     const hashed = await bcrypt.hash(password, 10);
     const user = await User.create({ 
-  name, email, password: hashed, gender, college,
-  skillsToTeach, skillsToLearn, openToLearnAll 
-});    res.status(201).json({ token: generateToken(user._id), user });
+  name, email, password: hashed, gender, college, bio, avatarUrl,
+  skillsToTeach, skillsToLearn, openToLearnAll, githubUrl, linkedinUrl
+});
+    const safeUser = user.toObject();
+    delete safeUser.password;
+    res.status(201).json({ token: generateToken(user._id), user: safeUser });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -28,7 +44,9 @@ export const login = async (req, res) => {
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: 'Invalid credentials' });
-    res.json({ token: generateToken(user._id), user });
+    const safeUser = user.toObject();
+    delete safeUser.password;
+    res.json({ token: generateToken(user._id), user: safeUser });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

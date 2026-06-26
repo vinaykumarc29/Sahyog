@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", var(--font-sans);
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --color-primary-indigo: #4648D4;
+  --color-primary-container: #6063EE;
+  --color-secondary-cyan: #00687A;
+  --color-accent-cyan: #57DFFE;
+  --color-sahyog-bg: #FCF8FF;
+  --color-surface: #FFFFFF;
+  --color-surface-variant: #E4E1ED;
+  --color-text-primary: #1B1B23;
+  --color-text-secondary: #464554;
+  --color-outline-custom: #C7C4D7;
+  --color-success-custom: #22C55E;
+  --color-warning-custom: #F59E0B;
+  --color-error-custom: #BA1A1A;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-sahyog-bg);
+  color: var(--color-text-primary);
+  overflow-x: hidden;
+}
+
+/* Glassmorphism custom classes */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-panel-dark {
+  background: rgba(27, 27, 35, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shadow-card {
+  box-shadow: 0px 10px 30px rgba(99, 102, 241, 0.05);
+}
+
+.gradient-cta {
+  background: linear-gradient(135deg, #4648D4 0%, #57DFFE 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #4648D4 0%, #57DFFE 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

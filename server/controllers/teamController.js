@@ -23,9 +23,9 @@ export const getTeamById = async (req, res) => {
 
 export const createTeam = async (req, res) => {
   try {
-    const { hackathonName, theme, eventDate, description, requiredSkills, maxSize } = req.body;
+    const { name, tagline, hackathonName, theme, eventDate, description, requiredSkills, maxSize } = req.body;
     const team = await Team.create({
-      hackathonName, theme, eventDate, description,
+      name, tagline, hackathonName, theme, eventDate, description,
       requiredSkills, maxSize,
       owner: req.user.id,
       members: [req.user.id]

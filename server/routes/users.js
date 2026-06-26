@@ -1,10 +1,11 @@
 import express from 'express';
-import { getUser, updateProfile, getMatches, sendConnectionRequest, acceptConnection } from '../controllers/userController.js';
+import { getUsers, getUser, updateProfile, getMatches, sendConnectionRequest, acceptConnection } from '../controllers/userController.js';
 import protect from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.get('/matches', protect, getMatches);
+router.get('/', protect, getUsers);
 router.get('/:id', protect, getUser);
 router.put('/profile', protect, updateProfile);
 router.post('/connect/:id', protect, sendConnectionRequest);
