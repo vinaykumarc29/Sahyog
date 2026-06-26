@@ -58,6 +58,7 @@ export const SearchResultsPage = ({ searchQuery, allUsers, allTeams, currentUser
             </div>) : (<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {matchedUsers.map((user) => {
                 const isConnected = currentUser.connections.includes(user.id);
+                const isSent = (currentUser.sentRequests || []).includes(user.id);
                 return (<div key={user.id} className="bg-white p-5 rounded-[32px] border border-outline-custom/30 hover:border-primary-indigo/35 transition-all shadow-sm flex flex-col justify-between space-y-4">
                     <div className="space-y-3">
                       <div className="flex justify-between items-start">
@@ -76,8 +77,16 @@ export const SearchResultsPage = ({ searchQuery, allUsers, allTeams, currentUser
                       <button onClick={() => onViewProfile(user.id)} className="text-[10px] font-black text-text-secondary hover:text-primary-indigo">
                         See Portfolio
                       </button>
-                      <button onClick={() => onConnectTrigger(user.id)} className="p-1.5 bg-primary-indigo/5 text-primary-indigo hover:bg-primary-indigo/10 rounded-lg transition-colors text-[10px] font-bold">
-                        {isConnected ? 'Connected' : 'Send Invite'}
+                      <button
+                        onClick={() => !isConnected && !isSent && onConnectTrigger(user.id)}
+                        disabled={isConnected || isSent}
+                        className={`px-3 py-1.5 rounded-lg text-[10px] font-bold transition-all ${isConnected
+                          ? 'bg-slate-100 text-slate-700 cursor-not-allowed border border-slate-200'
+                          : isSent
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200 cursor-not-allowed'
+                              : 'bg-primary-indigo/5 text-primary-indigo hover:bg-primary-indigo/10'}`}
+                      >
+                        {isConnected ? 'Connected' : isSent ? 'Request Sent' : 'Send Invite'}
                       </button>
                     </div>
                   </div>);

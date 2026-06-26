@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   openToLearnAll:  { type: Boolean, default: false },
   connections:     [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   pendingRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  sentRequests:    [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   githubUrl:       { type: String, default: '' },
   linkedinUrl:     { type: String, default: '' },
 }, { timestamps: true });

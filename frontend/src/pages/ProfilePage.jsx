@@ -165,12 +165,22 @@ export const ProfilePage = ({ viewingUser, currentUser, allUsers, allTeams, onBa
                         ) : (
                             <div className="space-y-3">
                                 {connectedUsers.map(user => (
-                                    <div key={user.id} className="flex items-center gap-3">
-                                        <img src={user.avatar} alt={user.name} className="w-9 h-9 rounded-full object-cover" />
-                                        <div>
-                                            <p className="text-xs font-bold text-text-primary">{user.name}</p>
-                                            <p className="text-[9px] text-text-secondary truncate max-w-[180px]">{user.college}</p>
+                                    <div key={user.id} className="flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <img src={user.avatar} alt={user.name} className="w-9 h-9 rounded-full object-cover" />
+                                            <div>
+                                                <p className="text-xs font-bold text-text-primary">{user.name}</p>
+                                                <p className="text-[9px] text-text-secondary truncate max-w-[150px]">{user.college}</p>
+                                            </div>
                                         </div>
+                                        {isSelf && (
+                                            <button
+                                                onClick={() => onToggleConnection(user.id)}
+                                                className="text-[10px] font-bold text-red-500 hover:text-red-700 hover:underline px-2.5 py-1 bg-red-50 hover:bg-red-100 rounded-lg transition-colors shrink-0"
+                                            >
+                                                Remove
+                                            </button>
+                                        )}
                                     </div>
                                 ))}
                             </div>

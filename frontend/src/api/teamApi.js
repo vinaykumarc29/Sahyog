@@ -14,3 +14,7 @@ export const applyToTeamApi = (teamId, message) =>
 
 export const approveApplicantApi = (teamId, userId) =>
   api.put(`/api/teams/${teamId}/approve/${userId}`);
+
+export const rejectApplicantApi = (teamId, userId) =>
+  api.put(`/api/teams/${teamId}/reject/${userId}`);
+

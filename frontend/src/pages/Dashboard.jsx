@@ -2,7 +2,19 @@ import React from 'react';
 import { TRENDING_SKILLS } from '../data';
 import { StatCard, MatchScoreBadge, OpenToLearnBadge } from '../components/BadgesAndTags';
 import { Compass, Users, Sparkles, MessageSquare, Plus, ArrowRight, UserPlus, Check, Flame } from 'lucide-react';
-export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, activePosts, setActiveTab, onAcceptConnection, onRejectConnection, onTriggerCreateTeam }) => {
+export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, activePosts, setActiveTab, onAcceptConnection, onRejectConnection, onTriggerCreateTeam, unreadCount = 0, lastMessageAt = null }) => {
+    // Format a relative time string from an ISO date
+    const formatLastSeen = (isoDate) => {
+        if (!isoDate) return 'No messages yet';
+        const diffMs = Date.now() - new Date(isoDate).getTime();
+        const diffMin = Math.floor(diffMs / 60000);
+        if (diffMin < 1)  return 'Just now';
+        if (diffMin < 60) return `Last message ${diffMin}m ago`;
+        const diffHr = Math.floor(diffMin / 60);
+        if (diffHr < 24)  return `Last message ${diffHr}h ago`;
+        return `Last message ${Math.floor(diffHr / 24)}d ago`;
+    };
+
     // Calculate some analytics
     const connectionCount = currentUser.connections.length;
     const requestsCount = currentUser.pendingRequests.length;
@@ -54,7 +66,7 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
         <StatCard icon={<Users className="w-5.5 h-5.5"/>} label="Active Connections" value={connectionCount} change="+2 connected this week"/>
         <StatCard icon={<Sparkles className="w-5.5 h-5.5"/>} label="Overlap Match Level" value={`${matchPercentageAverage}%`} change="Top 5% on campus"/>
         <StatCard icon={<Compass className="w-5.5 h-5.5"/>} label="Team Collaborations" value={allTeams.filter(t => t.members.includes(currentUser.id)).length} change="1 application pending"/>
-        <StatCard icon={<MessageSquare className="w-5.5 h-5.5"/>} label="Unread Messages" value={3} change="Last message 4m ago" isPositive={false}/>
+        <StatCard icon={<MessageSquare className="w-5.5 h-5.5"/>} label="Unread Messages" value={unreadCount} change={formatLastSeen(lastMessageAt)} isPositive={false}/>
       </div>
 
       {/* 3. Grid Structure for Main Dashboard widgets */}
@@ -114,6 +126,7 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
             const teachOverlap = user.skillsToTeach.filter(s => currentUser.skillsToLearn.includes(s));
             const learnOverlap = user.skillsToLearn.filter(s => currentUser.skillsToTeach.includes(s));
             const score = teachOverlap.length > 0 ? 88 : 72; // simulated high-fidelity match scores
+            const isSent = (currentUser.sentRequests || []).includes(user.id);
             return (<div key={user.id} className="bg-[#FCF8FF]/80 p-5 rounded-3xl border border-outline-custom/15 flex flex-col justify-between hover:border-primary-indigo/25 transition-all shadow-sm">
                     <div className="space-y-4">
                       <div className="flex justify-between items-start">
@@ -140,8 +153,12 @@ export const Dashboard = ({ currentUser, allUsers, allTeams, notifications, acti
                       <button onClick={() => setActiveTab(`profile-${user.id}`)} className="text-[10px] font-bold text-text-secondary hover:text-primary-indigo hover:underline">
                         View Portfolio
                       </button>
-                      <button onClick={() => onAcceptConnection(user.id)} className="p-1.5 bg-primary-indigo hover:bg-indigo-600 text-white rounded-full transition-transform hover:scale-105">
-                        <UserPlus className="w-3.5 h-3.5"/>
+                      <button
+                        onClick={() => !isSent && onAcceptConnection(user.id)}
+                        disabled={isSent}
+                        className={`p-1.5 rounded-full transition-transform hover:scale-105 ${isSent ? 'bg-amber-100 text-amber-700 cursor-not-allowed' : 'bg-primary-indigo hover:bg-indigo-600 text-white'}`}
+                      >
+                        {isSent ? <Check className="w-3.5 h-3.5" /> : <UserPlus className="w-3.5 h-3.5"/>}
                       </button>
                     </div>
                   </div>);

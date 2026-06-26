@@ -174,11 +174,15 @@ export const MatchesPage = ({ currentUser, allUsers, onConnectTrigger, onViewPro
                         View Full Portfolio
                       </button>
 
-                      <button onClick={() => onConnectTrigger(user.id)} className={`px-4 py-2 rounded-xl text-[10px] font-black tracking-wider uppercase shadow-sm transition-all flex items-center gap-1.5 ${isConnected
-                        ? 'bg-slate-100 text-slate-700'
-                        : isSent
-                            ? 'bg-amber-50 text-amber-700 border border-amber-200'
-                            : 'bg-primary-indigo text-white hover:bg-indigo-600'}`}>
+                      <button
+                        onClick={() => !isConnected && !isSent && onConnectTrigger(user.id)}
+                        disabled={isConnected || isSent}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black tracking-wider uppercase shadow-sm transition-all flex items-center gap-1.5 ${isConnected
+                          ? 'bg-slate-100 text-slate-700 cursor-not-allowed'
+                          : isSent
+                              ? 'bg-amber-50 text-amber-700 border border-amber-200 cursor-not-allowed'
+                              : 'bg-primary-indigo text-white hover:bg-indigo-600'}`}
+                      >
                         {isConnected ? (<>
                             <Check className="w-3 h-3 stroke-[3]"/>
                             <span>Connected</span>

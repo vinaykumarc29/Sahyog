@@ -5,3 +5,7 @@ export const getMessagesApi = (userId) =>
 
 export const sendMessageApi = (userId, content) =>
   api.post(`/api/messages/${userId}`, { content });
+
+// Returns { count: number, lastMessageAt: string | null }
+export const getUnreadCountApi = () =>
+  api.get('/api/messages/unread-count');

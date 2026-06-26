@@ -1,5 +1,5 @@
 import express from 'express';
-import { getUsers, getUser, updateProfile, getMatches, sendConnectionRequest, acceptConnection } from '../controllers/userController.js';
+import { getUsers, getUser, updateProfile, getMatches, sendConnectionRequest, acceptConnection, rejectConnection, removeConnection } from '../controllers/userController.js';
 import protect from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -10,5 +10,8 @@ router.get('/:id', protect, getUser);
 router.put('/profile', protect, updateProfile);
 router.post('/connect/:id', protect, sendConnectionRequest);
 router.put('/connect/:id/accept', protect, acceptConnection);
+router.put('/connect/:id/reject', protect, rejectConnection);
+router.delete('/connect/:id', protect, removeConnection);
+
 
 export default router;

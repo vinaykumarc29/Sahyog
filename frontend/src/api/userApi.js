@@ -28,3 +28,10 @@ export const sendConnectionRequestApi = (id) =>
 
 export const acceptConnectionApi = (id) =>
   api.put(`/api/users/connect/${id}/accept`);
+
+export const rejectConnectionApi = (id) =>
+  api.put(`/api/users/connect/${id}/reject`);
+
+export const removeConnectionApi = (id) =>
+  api.delete(`/api/users/connect/${id}`);
+

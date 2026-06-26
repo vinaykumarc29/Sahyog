@@ -2,7 +2,9 @@ import { useEffect, useState, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useAuth } from './context/AuthContext.jsx';
 import api from './api/axios.js';
-import { approveApplicantApi } from './api/teamApi.js';
+import { approveApplicantApi, rejectApplicantApi } from './api/teamApi.js';
+import { getUnreadCountApi } from './api/messageApi.js';
+
 import { normalizeTeam, normalizeUser } from './api/mappers.js';
 import { Layout } from './components/Layout.jsx';
 import { useTeam } from './hooks/useTeam.js';
@@ -96,6 +98,18 @@ const DataRoute = ({ children }) => {
 
 const DashboardRoute = () => {
   const navigate = useNavigate();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [lastMessageAt, setLastMessageAt] = useState(null);
+
+  useEffect(() => {
+    getUnreadCountApi()
+      .then(res => {
+        setUnreadCount(res.data.count ?? 0);
+        setLastMessageAt(res.data.lastMessageAt ?? null);
+      })
+      .catch(() => {}); // silently fail — stat card falls back to 0
+  }, []);
+
   return (
     <DataRoute>
       {({ currentUser, users, teams, reload }) => (
@@ -106,6 +120,8 @@ const DashboardRoute = () => {
             allTeams={teams}
             notifications={[]}
             activePosts={[]}
+            unreadCount={unreadCount}
+            lastMessageAt={lastMessageAt}
             setActiveTab={(tab) => {
               if (tab === 'matches') navigate('/matches');
               else if (tab === 'teams') navigate('/teams');
@@ -120,7 +136,10 @@ const DashboardRoute = () => {
               }
               await reload();
             }}
-            onRejectConnection={reload}
+            onRejectConnection={async (id) => {
+              await api.put(`/api/users/connect/${id}/reject`);
+              await reload();
+            }}
             onTriggerCreateTeam={() => navigate('/teams/create')}
           />
         </Layout>
@@ -185,12 +204,13 @@ const ProfileRoute = () => {
               allTeams={teams}
               onBackToDashboard={() => navigate('/dashboard')}
               onInitiateChat={() => navigate('/chat')}
-              onToggleConnection={async () => {
-                if (viewingUser.id !== currentUser.id) {
-                  if ((currentUser.connections || []).includes(viewingUser.id)) {
-                    // Already connected — could add disconnect endpoint here
+              onToggleConnection={async (targetUserId) => {
+                const targetId = targetUserId || viewingUser.id;
+                if (targetId !== currentUser.id) {
+                  if ((currentUser.connections || []).includes(targetId)) {
+                    await api.delete(`/api/users/connect/${targetId}`);
                   } else {
-                    await api.post(`/api/users/connect/${viewingUser.id}`);
+                    await api.post(`/api/users/connect/${targetId}`);
                   }
                 }
                 await reload();
@@ -309,9 +329,9 @@ const TeamDetailRoute = () => {
               onHandleApplication={async (applicantUserId, action) => {
                 if (action === 'approved') {
                   await approveApplicantApi(id, applicantUserId);
+                } else if (action === 'rejected') {
+                  await rejectApplicantApi(id, applicantUserId);
                 }
-                // For rejected, we just refetch — backend doesn't need explicit rejection call
-                // (you could add a reject endpoint later)
                 await refetch();
               }}
             />
@@ -388,7 +408,10 @@ const NotificationsRoute = () => (
               await api.put(`/api/users/connect/${senderId}/accept`);
               await reload();
             }}
-            onRejectConnection={reload}
+            onRejectConnection={async (senderId) => {
+              await api.put(`/api/users/connect/${senderId}/reject`);
+              await reload();
+            }}
             setActiveTab={() => {}}
           />
         </Layout>

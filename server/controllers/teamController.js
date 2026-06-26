@@ -82,3 +82,25 @@ export const approveApplication = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+export const rejectApplication = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.id);
+    if (!team) return res.status(404).json({ message: 'Team not found' });
+    if (team.owner.toString() !== req.user.id)
+      return res.status(403).json({ message: 'Not authorized' });
+
+    const application = team.applications.find(a => a.userId.toString() === req.params.userId);
+    if (!application) return res.status(404).json({ message: 'Application not found' });
+
+    if (application.status !== 'pending')
+      return res.status(400).json({ message: 'Application is not pending' });
+
+    application.status = 'rejected';
+    await team.save();
+    res.json({ message: 'Application rejected', team });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+

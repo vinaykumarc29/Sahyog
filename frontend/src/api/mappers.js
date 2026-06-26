@@ -14,7 +14,7 @@ export const normalizeUser = (user = {}) => {
     skillsToLearn: user.skillsToLearn || [],
     connections: (user.connections || []).map(item => item._id || item.id || item.toString()),
     pendingRequests: (user.pendingRequests || []).map(item => item._id || item.id || item.toString()),
-    sentRequests: user.sentRequests || [],
+    sentRequests: (user.sentRequests || []).map(item => item._id || item.id || item.toString()),
     isOpenToLearnAnything: Boolean(user.openToLearnAll ?? user.isOpenToLearnAnything),
   };
 };
