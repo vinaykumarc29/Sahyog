@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles, Users, BookOpen, MessageSquare, Flame, ArrowRight, CheckCircle, Code, Award } from 'lucide-react';
 import { OpenToLearnBadge } from '../components/BadgesAndTags';
+import { Link } from 'react-router-dom';
 export const LandingPage = ({ onStartOnboarding, onLogin }) => {
     return (<div className="bg-[#FCF8FF] min-h-screen relative overflow-hidden font-sans">
       
@@ -175,6 +176,7 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             {/* Capability 1: Skill Exchange */}
+            <Link to='/register'>
             <div className="p-8 rounded-3xl bg-sahyog-bg border border-outline-custom/20 shadow-sm hover:shadow-lg hover:border-primary-indigo/30 transition-all group" id="skillexchange">
               <div className="w-12 h-12 rounded-2xl bg-primary-indigo/10 flex items-center justify-center text-primary-indigo mb-6 group-hover:scale-110 transition-transform">
                 <BookOpen className="w-6 h-6"/>
@@ -188,8 +190,12 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
                 <ArrowRight className="w-3.5 h-3.5"/>
               </div>
             </div>
+            </Link>
 
             {/* Capability 2: Hackathon Squad Builder */}
+            <Link to='/register'>
+
+
             <div className="p-8 rounded-3xl bg-sahyog-bg border border-outline-custom/20 shadow-sm hover:shadow-lg hover:border-primary-indigo/30 transition-all group" id="teamfinder">
               <div className="w-12 h-12 rounded-2xl bg-cyan-100 flex items-center justify-center text-secondary-cyan mb-6 group-hover:scale-110 transition-transform">
                 <Users className="w-6 h-6"/>
@@ -203,8 +209,11 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
                 <ArrowRight className="w-3.5 h-3.5"/>
               </div>
             </div>
+            </Link>
 
             {/* Capability 3: Real-Time Messaging */}
+            <Link to='/register'>
+
             <div className="p-8 rounded-3xl bg-sahyog-bg border border-outline-custom/20 shadow-sm hover:shadow-lg hover:border-primary-indigo/30 transition-all group">
               <div className="w-12 h-12 rounded-2xl bg-emerald-100 flex items-center justify-center text-emerald-700 mb-6 group-hover:scale-110 transition-transform">
                 <MessageSquare className="w-6 h-6"/>
@@ -217,6 +226,7 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
                 <span>Connect and chat instantly →</span>
               </div>
             </div>
+            </Link>
 
           </div>
         </div>

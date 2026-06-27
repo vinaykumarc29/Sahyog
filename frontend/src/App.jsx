@@ -19,12 +19,6 @@ import { SearchResultsPage } from './pages/SearchResultsPage.jsx';
 import { NotificationsPage } from './pages/NotificationsPage.jsx';
 import ProtectedRoute from './pages/ProtectedRoute.jsx';
 import LoadingState from './pages/LoadingState.jsx';
-/* ─── Loading & Error States ──────────────────────────────────── */
-// const LoadingState = () => (
-//   <div className="min-h-screen grid place-items-center bg-[#FCF8FF] text-xs font-bold text-text-secondary">
-//     Loading Sahyog...
-//   </div>
-// );
 
 const ErrorState = ({ error }) => (
   <div className="min-h-screen grid place-items-center bg-[#FCF8FF] p-6">

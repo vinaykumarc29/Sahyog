@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useWorkspace } from '../context/WorkspaceContext.jsx';
 import api from '../api/axios.js';
@@ -92,15 +93,16 @@ export const ProfilePage = () => {
 
                         {/* Action panel */}
                         <div className="flex flex-wrap gap-2.5 shrink-0">
+                            {console.log(viewingUser.linkedin , viewingUser.github)}
                             {viewingUser.github && (
-                                <a href={viewingUser.github} target="_blank" rel="noreferrer" className="p-3 bg-sahyog-bg hover:bg-slate-100 rounded-2xl border border-outline-custom/25 text-text-secondary hover:text-text-primary transition-all">
+                                <Link to={viewingUser.github} target="_blank" rel="noreferrer" className="p-3 bg-sahyog-bg hover:bg-slate-100 rounded-2xl border border-outline-custom/25 text-text-secondary hover:text-text-primary transition-all">
                                     <Code2 className="w-4 h-4" />
-                                </a>
+                                </Link>
                             )}
                             {viewingUser.linkedin && (
-                                <a href={viewingUser.linkedin} target="_blank" rel="noreferrer" className="p-3 bg-sahyog-bg hover:bg-slate-100 rounded-2xl border border-outline-custom/25 text-text-secondary hover:text-text-primary transition-all">
+                                <Link to={viewingUser.linkedin} target="_blank" rel="noreferrer" className="p-3 bg-sahyog-bg hover:bg-slate-100 rounded-2xl border border-outline-custom/25 text-text-secondary hover:text-text-primary transition-all">
                                     <BriefcaseBusiness className="w-4 h-4" />
-                                </a>
+                                </Link>
                             )}
 
                             {isSelf ? (

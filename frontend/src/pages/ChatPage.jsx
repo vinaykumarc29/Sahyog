@@ -68,10 +68,10 @@ export const ChatPage = () => {
 
             <div className="bg-white rounded-[32px] border border-outline-custom/30 shadow-card overflow-hidden h-[580px] grid grid-cols-1 md:grid-cols-12 relative">
 
-                {/* Sidebar */}
-                <div className={`md:col-span-4 border-r border-outline-custom/15 flex flex-col h-full bg-slate-50/50 ${showMobileList ? 'block' : 'hidden md:flex'}`}>
+                {/* Sidebar - Added min-h-0 here */}
+                <div className={`md:col-span-4 border-r border-outline-custom/15 flex flex-col h-full bg-slate-50/50 min-h-0 ${showMobileList ? 'block' : 'hidden md:flex'}`}>
 
-                    <div className="p-4 border-b border-outline-custom/15 bg-white space-y-3">
+                    <div className="p-4 border-b border-outline-custom/15 bg-white space-y-3 shrink-0">
                         <h3 className="text-sm font-black text-text-primary tracking-wide flex items-center gap-2">
                             <MessageSquare className="w-4 h-4 text-primary-indigo" />
                             <span>Campus Co-conspirators</span>
@@ -129,8 +129,8 @@ export const ChatPage = () => {
                     </div>
                 </div>
 
-                {/* Conversation Panel */}
-                <div className={`md:col-span-8 flex flex-col h-full bg-white relative ${!showMobileList ? 'block' : 'hidden md:flex'}`}>
+                {/* Conversation Panel - Added min-h-0 here */}
+                <div className={`md:col-span-8 flex flex-col h-full bg-white relative min-h-0 ${!showMobileList ? 'block' : 'hidden md:flex'}`}>
 
                     {activePartner ? (
                         <>

@@ -30,7 +30,7 @@ export const MatchesPage = () => {
         const teachToLearnOverlap = (user.skillsToTeach || []).filter(s => (currentUser.skillsToLearn || []).includes(s));
         const learnToTeachOverlap = (user.skillsToLearn || []).filter(s => (currentUser.skillsToTeach || []).includes(s));
         const totalOverlapCount = teachToLearnOverlap.length + learnToTeachOverlap.length;
-        let score = 50;
+        let score = 0;
         if (totalOverlapCount > 0) score += Math.min(totalOverlapCount * 12, 45);
         if (user.college === currentUser.college) score += 5;
         return { score, teachOverlap: teachToLearnOverlap, learnOverlap: learnToTeachOverlap };
