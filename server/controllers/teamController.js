@@ -9,6 +9,8 @@ export const getTeams = async (req, res) => {
   }
 };
 
+
+
 export const getTeamById = async (req, res) => {
   try {
     const team = await Team.findById(req.params.id)
@@ -31,6 +33,36 @@ export const createTeam = async (req, res) => {
       members: [req.user.id]
     });
     res.status(201).json(team);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const deleteTeam = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.id);
+    if (!team) return res.status(404).json({ message: 'Team not found' });
+    if (team.owner.toString() !== req.user.id)
+      return res.status(403).json({ message: 'Not authorized' });
+    await Team.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Team deleted' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+export const removeMember = async (req, res) => {
+  try {
+    const team = await Team.findById(req.params.id);
+    if (!team) return res.status(404).json({ message: 'Team not found' });
+    if (team.owner.toString() !== req.user.id)
+      return res.status(403).json({ message: 'Not authorized' });
+    if (req.params.userId === req.user.id)
+      return res.status(400).json({ message: 'Owner cannot remove themselves' });
+    team.members = team.members.filter(m => m.toString() !== req.params.userId);
+    if (team.status === 'full') team.status = 'open';
+    await team.save();
+    res.json({ message: 'Member removed', team });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -89,16 +121,13 @@ export const rejectApplication = async (req, res) => {
     if (!team) return res.status(404).json({ message: 'Team not found' });
     if (team.owner.toString() !== req.user.id)
       return res.status(403).json({ message: 'Not authorized' });
-
-    const application = team.applications.find(a => a.userId.toString() === req.params.userId);
+    const application = team.applications.find(
+      a => a.userId.toString() === req.params.userId
+    );
     if (!application) return res.status(404).json({ message: 'Application not found' });
-
-    if (application.status !== 'pending')
-      return res.status(400).json({ message: 'Application is not pending' });
-
     application.status = 'rejected';
     await team.save();
-    res.json({ message: 'Application rejected', team });
+    res.json({ message: 'Application rejected' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

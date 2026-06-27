@@ -4,12 +4,12 @@ import { useWorkspace } from '../context/WorkspaceContext.jsx';
 import { useTeam } from '../hooks/useTeam.js';
 import api from '../api/axios.js';
 import { approveApplicantApi, rejectApplicantApi } from '../api/teamApi.js';
-import { Users, Calendar, ArrowLeft, AlertCircle, Send, UserCheck } from 'lucide-react';
+import { Users, Trash2, UserMinus, Calendar, ArrowLeft, AlertCircle, Send, UserCheck } from 'lucide-react';
 
 export const TeamDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { currentUser, users: allUsers } = useWorkspace();
+    const { currentUser, users: allUsers, reloadWorkspace } = useWorkspace();
     const { team, loading, error, refetch } = useTeam(id);
     const [showApplyPanel, setShowApplyPanel] = useState(false);
     const [coverLetter, setCoverLetter] = useState('');
@@ -26,8 +26,23 @@ export const TeamDetailPage = () => {
     const onHandleApplication = async (applicantUserId, action) => {
         if (action === 'approved') await approveApplicantApi(id, applicantUserId);
         else if (action === 'rejected') await rejectApplicantApi(id, applicantUserId);
-        await refetch();
+        await refetch(); 
     };
+
+    const onDeleteTeam = async () => {
+        if (!window.confirm('Delete this team permanently?')) return;
+        await api.delete(`/api/teams/${id}`);
+        navigate('/teams');
+        await reloadWorkspace();
+    };
+
+   const onRemoveMember = async (memberId) => {
+    if (!window.confirm('Remove this member?')) return;
+    await api.delete(`/api/teams/${id}/members/${memberId}`);
+    await refetch();          // update TeamDetailPage
+    reloadWorkspace();        // update TeamFinder in background — no await needed
+};
+
     const isOwner = team.ownerId === currentUser.id;
     const isMember = (team.members || []).includes(currentUser.id);
 
@@ -37,28 +52,29 @@ export const TeamDetailPage = () => {
 
     // Check if current user has already applied
     // app.userId is the backend field (not applicantId)
-    const existingApplication = (team.applications || []).find(
-        app => (app.applicantId || app.userId?._id || app.userId) === currentUser.id ||
-               (app.applicantId || app.userId) === currentUser.id
-    );
+   const existingApplication = (team.applications || []).find(app => {
+    const appUserId = String(app.applicantId || app.userId?._id || app.userId);
+    return appUserId === String(currentUser.id) && app.status === 'pending';
+});
 
     // Format event date
     const formattedDate = team.eventDate
         ? new Date(team.eventDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : 'TBA';
 
-    const handleApply = async (e) => {
-        e.preventDefault();
-        if (!coverLetter.trim()) return;
-        setApplyError('');
-        try {
-            await onApplySubmit(coverLetter.trim());
-            setCoverLetter('');
-            setShowApplyPanel(false);
-        } catch (err) {
-            setApplyError(err.message || 'Failed to submit application');
-        }
-    };
+  const handleApply = async (e) => {
+    e.preventDefault();
+    if (!coverLetter.trim()) return;
+    setApplyError('');
+    try {
+        await onApplySubmit(coverLetter.trim());
+        await refetch(); // add this — updates existingApplication immediately
+        setCoverLetter('');
+        setShowApplyPanel(false);
+    } catch (err) {
+        setApplyError(err.message || 'Failed to submit application');
+    }
+};
 
     return (
         <div className="max-w-5xl mx-auto px-4 lg:px-8 py-8 font-sans pb-24 lg:pb-8 space-y-8">
@@ -121,15 +137,24 @@ export const TeamDetailPage = () => {
                             {memberUsers.length > 0 ? memberUsers.map(member => {
                                 const isLeader = member.id === team.ownerId;
                                 return (
-                                    <div key={member.id} className="p-4 rounded-2xl bg-sahyog-bg/50 border border-outline-custom/15 flex items-center gap-3">
-                                        <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full object-cover border border-primary-indigo/10" />
-                                        <div className="min-w-0">
-                                            <p className="text-xs font-bold text-text-primary flex items-center gap-1">
-                                                <span>{member.name}</span>
-                                                {isLeader && <span className="text-[8px] bg-primary-indigo/10 text-primary-indigo px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider">FOUNDER</span>}
-                                            </p>
-                                            <p className="text-[9px] text-text-secondary truncate">{member.college}</p>
+                                    <div key={member.id} className="p-4 rounded-2xl bg-sahyog-bg/50 border border-outline-custom/15 flex items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <img src={member.avatar} alt={member.name} className="w-10 h-10 rounded-full object-cover border border-primary-indigo/10" />
+                                            <div className="min-w-0">
+                                                <p className="text-xs font-bold text-text-primary flex items-center gap-1">
+                                                    <span>{member.name}</span>
+                                                    {isLeader && <span className="text-[8px] bg-primary-indigo/10 text-primary-indigo px-1.5 py-0.5 rounded-full font-black uppercase tracking-wider">FOUNDER</span>}
+                                                </p>
+                                                <p className="text-[9px] text-text-secondary truncate">{member.college}</p>
+                                            </div>
                                         </div>
+                                        {/* owner can remove non-owner members */}
+                                        {isOwner && !isLeader && (
+                                            <button onClick={() => onRemoveMember(member.id)}
+                                                className="p-1.5 hover:bg-red-50 text-slate-400 hover:text-red-500 rounded-lg transition-colors">
+                                                <UserMinus className="w-3.5 h-3.5" />
+                                            </button>
+                                        )}
                                     </div>
                                 );
                             }) : (
@@ -267,6 +292,15 @@ export const TeamDetailPage = () => {
                                             </div>
                                         );
                                     })}
+                                </div>
+                            )}
+                            {isOwner && (
+                                <div className="pt-4 border-t border-outline-custom/10">
+                                    <button onClick={onDeleteTeam}
+                                        className="w-full py-2.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-black rounded-xl flex items-center justify-center gap-2 transition-colors">
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                        <span>Delete Team</span>
+                                    </button>
                                 </div>
                             )}
                         </div>
