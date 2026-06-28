@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Mail, Lock, Check, Code2, Globe, GraduationCap, ArrowRight } from 'lucide-react';
+import { Mail, Lock, Check, GraduationCap, ArrowRight } from 'lucide-react';
 import api from '../api/axios.js';
 import { useAuth } from '../context/AuthContext.jsx';
 
 export const LoginPage = ({ onLoginSuccess, onNavigateToRegister, onBackToLanding }) => {
     const navigate = useNavigate();
-    const { login } = useAuth();
+    const { user, login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [rememberMe, setRememberMe] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [infoMessage, setInfoMessage] = useState('');
+
+    // Redirect if already authenticated
+    React.useEffect(() => {
+        if (user) {
+            if (user.isAdmin) {
+                navigate('/admin', { replace: true });
+            } else {
+                navigate('/dashboard', { replace: true });
+            }
+        }
+    }, [user, navigate]);
+
     const goToRegister = onNavigateToRegister || (() => navigate('/register'));
     const goToLanding = onBackToLanding || (() => navigate('/'));
     const handleSubmit = async (e) => {
@@ -27,7 +39,11 @@ export const LoginPage = ({ onLoginSuccess, onNavigateToRegister, onBackToLandin
             const res = await api.post('/api/auth/login', { email, password });
             login(res.data.token, res.data.user);
             onLoginSuccess?.(res.data.user);
-            navigate('/dashboard');
+            if (res.data.user?.isAdmin) {
+                navigate('/admin');
+            } else {
+                navigate('/dashboard');
+            }
         }
         catch (err) {
             setError(err.response?.data?.message || 'Could not sign in. Please check your credentials.');
@@ -36,16 +52,7 @@ export const LoginPage = ({ onLoginSuccess, onNavigateToRegister, onBackToLandin
             setSubmitting(false);
         }
     };
-    const fillQuickAcc = (type) => {
-        if (type === 'tejaswini') {
-            setEmail('tejaswinibakka2115@gmail.com');
-            setPassword('password123');
-        }
-        else {
-            setEmail('aarav@iitb.ac.in');
-            setPassword('password123');
-        }
-    };
+
     return (<div className="min-h-screen w-full bg-[#FCF8FF] relative flex flex-col justify-center items-center p-6 overflow-hidden font-sans">
       
       {/* Absolute Decorative Blur Elements */}

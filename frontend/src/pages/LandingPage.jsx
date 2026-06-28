@@ -23,7 +23,7 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
 
           {/* Updated text to match the new image branding */}
           <div>
-            <span className="text-xl font-extrabold tracking-tight text-text-primary font-display flex items-center gap-1">
+            <span className="text-base md:text-xl font-extrabold tracking-tight text-text-primary font-display flex items-center gap-1">
               SAHAYOG
               {/* <span className="text-[10px] uppercase font-bold tracking-widest bg-primary-indigo/5 text-primary-indigo px-1.5 py-0.5 rounded-md border border-primary-indigo/10">v1.0</span> */}
             </span>
@@ -113,8 +113,8 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
                   T
                 </div>
                 <div>
-                  <h4 className="text-xs font-extrabold text-text-primary">Tejaswini Bakka</h4>
-                  <p className="text-[10px] text-text-secondary">Stanford • Can Teach: <b className="text-primary-indigo">React</b></p>
+                  <h4 className="text-xs font-extrabold text-text-primary">Tejaswini</h4>
+                  <p className="text-[10px] text-text-secondary">IIT hyderabad • Can Teach: <b className="text-primary-indigo">React</b></p>
                 </div>
               </div>
               <div className="bg-success-custom/10 text-success-custom text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1">
@@ -134,11 +134,11 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
             <div className="bg-cyan-50/40 p-4 rounded-2xl border border-cyan-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-cyan-200 flex items-center justify-center text-secondary-cyan font-bold text-sm">
-                  C
+                  S
                 </div>
                 <div>
-                  <h4 className="text-xs font-extrabold text-text-primary">Chloe Chen</h4>
-                  <p className="text-[10px] text-text-secondary">Berkeley • Wants: <b className="text-secondary-cyan">React</b></p>
+                  <h4 className="text-xs font-extrabold text-text-primary">Sherya</h4>
+                  <p className="text-[10px] text-text-secondary">IIT Hyderabad • Wants: <b className="text-secondary-cyan">React</b></p>
                 </div>
               </div>
               <span className="text-[10px] bg-cyan-100 text-secondary-cyan px-2.5 py-1 rounded-full font-bold">RESEARCHER</span>

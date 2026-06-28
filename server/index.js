@@ -11,6 +11,13 @@ import messageRoutes from './routes/messages.js';
 import searchRoutes from './routes/search.js';
 import socketHandler from './socket/socketHandler.js';
 
+import adminAuthRoutes from './admin/routes/adminAuth.js';
+import adminStatsRoutes from './admin/routes/adminStats.js';
+import adminUserRoutes from './admin/routes/adminUsers.js';
+import adminTeamRoutes from './admin/routes/adminTeams.js';
+import adminSkillRoutes from './admin/routes/adminSkills.js';
+
+
 dotenv.config();
 connectDB();
 
@@ -30,7 +37,12 @@ app.use('/api/users', userRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/search', searchRoutes);
-
+//admin routes
+app.use('/api/admin/auth', adminAuthRoutes);
+app.use('/api/admin/stats', adminStatsRoutes);
+app.use('/api/admin/users', adminUserRoutes);
+app.use('/api/admin/teams', adminTeamRoutes);
+app.use('/api/admin/skills', adminSkillRoutes);
 socketHandler(io);
 
 httpServer.listen(process.env.PORT, () => {

@@ -19,6 +19,7 @@ import { SearchResultsPage } from './pages/SearchResultsPage.jsx';
 import { NotificationsPage } from './pages/NotificationsPage.jsx';
 import ProtectedRoute from './pages/ProtectedRoute.jsx';
 import LoadingState from './pages/LoadingState.jsx';
+import { AdminDashboard } from './pages/AdminDashboard.jsx';
 
 const ErrorState = ({ error }) => (
   <div className="min-h-screen grid place-items-center bg-[#FCF8FF] p-6">
@@ -89,6 +90,9 @@ const App = () => {
       <Route path="/chat"            element={<ProtectedRoute><Gated><ChatPage /></Gated></ProtectedRoute>} />
       <Route path="/search"          element={<ProtectedRoute><SearchWrapper /></ProtectedRoute>} />
       <Route path="/notifications"   element={<ProtectedRoute><Gated><NotificationsPage /></Gated></ProtectedRoute>} />
+
+      {/* Admin routes */}
+      <Route path="/admin"           element={<ProtectedRoute adminOnly={true}><AdminDashboard /></ProtectedRoute>} />
 
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>

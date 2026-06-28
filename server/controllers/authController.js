@@ -44,6 +44,11 @@ export const login = async (req, res) => {
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ message: 'Invalid credentials' });
+
+    if (user.isSuspended) {
+      return res.status(403).json({ message: 'Your account has been suspended. Please contact support.' });
+    }
+
     const safeUser = user.toObject();
     delete safeUser.password;
     res.json({ token: generateToken(user._id), user: safeUser });
@@ -55,6 +60,10 @@ export const login = async (req, res) => {
 export const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.isSuspended) {
+      return res.status(403).json({ message: 'Your account has been suspended. Please contact support.' });
+    }
     res.json(user);
   } catch (err) {
     res.status(500).json({ message: err.message });

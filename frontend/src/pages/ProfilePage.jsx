@@ -93,7 +93,6 @@ export const ProfilePage = () => {
 
                         {/* Action panel */}
                         <div className="flex flex-wrap gap-2.5 shrink-0">
-                            {console.log(viewingUser.linkedin , viewingUser.github)}
                             {viewingUser.github && (
                                 <Link to={viewingUser.github} target="_blank" rel="noreferrer" className="p-3 bg-sahyog-bg hover:bg-slate-100 rounded-2xl border border-outline-custom/25 text-text-secondary hover:text-text-primary transition-all">
                                     <Code2 className="w-4 h-4" />
