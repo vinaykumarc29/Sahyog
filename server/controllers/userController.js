@@ -1,5 +1,7 @@
 import User from '../models/User.js';
 
+
+
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find().select('-password');
@@ -70,6 +72,7 @@ export const getMatches = async (req, res) => {
 
 export const sendConnectionRequest = async (req, res) => {
   try {
+    
     const receiver = await User.findById(req.params.id);
     if (!receiver) return res.status(404).json({ message: 'User not found' });
     
@@ -80,21 +83,24 @@ export const sendConnectionRequest = async (req, res) => {
     // Check if already connected
     if (receiver.connections.includes(req.user.id))
       return res.status(400).json({ message: 'Already connected with this user' });
-
+    
     if (receiver.pendingRequests.includes(req.user.id))
       return res.status(400).json({ message: 'Request already sent' });
-      
+    
     const sender = await User.findById(req.user.id);
     if (!sender) return res.status(404).json({ message: 'Sender not found' });
-      
+    
     receiver.pendingRequests.push(req.user.id);
     await receiver.save();
-
+    
     if (!sender.sentRequests.includes(req.params.id)) {
       sender.sentRequests.push(req.params.id);
       await sender.save();
     }
+    const io = req.app.get('io');
+     io.to(req.params.id).emit('connectionRequest', { from: req.user.id });
 
+    
     res.json({ message: 'Request sent' });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -116,6 +122,11 @@ export const acceptConnection = async (req, res) => {
     requester.sentRequests = (requester.sentRequests || []).filter(id => id.toString() !== req.user.id);
     await me.save();
     await requester.save();
+
+    const io = req.app.get('io');
+io.to(req.params.id).emit('connectionAccepted', { by: req.user.id });
+
+
     res.json({ message: 'Connection accepted' });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -137,6 +148,10 @@ export const rejectConnection = async (req, res) => {
       requester.sentRequests = (requester.sentRequests || []).filter(id => id.toString() !== req.user.id);
       await requester.save();
     }
+
+    const io = req.app.get('io');
+   io.to(req.params.id).emit('connectionRejected', { by: req.user.id });
+
 
     res.json({ message: 'Connection request declined' });
   } catch (err) {
@@ -166,4 +181,5 @@ export const removeConnection = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 

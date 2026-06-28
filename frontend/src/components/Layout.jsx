@@ -1,15 +1,27 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useWorkspace } from '../context/WorkspaceContext.jsx';
 import { Header } from './Header.jsx';
 
-/**
- * Layout wraps all authenticated pages with the sticky Header.
- * Receives currentUser, allUsers, allTeams, and notifications to pass into Header.
- */
-export const Layout = ({ children, currentUser, allUsers = [], allTeams = [], notifications = [] }) => {
+export const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { currentUser, users: allUsers, teams: allTeams } = useWorkspace();
+
+  // build real notifications from pendingRequests
+  const notifications = (currentUser?.pendingRequests || []).map(reqId => {
+    const sender = (allUsers || []).find(u => u.id === String(reqId));
+    return {
+      id: `conn-${reqId}`,
+      type: 'connection_request',
+      title: 'Connection Request',
+      message: sender ? `${sender.name} wants to connect with you` : 'Someone wants to connect with you',
+      senderId: String(reqId),
+      isRead: false,
+      timestamp: 'Recently',
+    };
+  });
 
   const handleLogout = () => {
     logout();
@@ -22,6 +34,8 @@ export const Layout = ({ children, currentUser, allUsers = [], allTeams = [], no
     }
   };
 
+  if (!currentUser) return <>{children}</>;
+
   return (
     <div className="min-h-screen bg-[#FCF8FF] font-sans">
       <Header
@@ -33,9 +47,7 @@ export const Layout = ({ children, currentUser, allUsers = [], allTeams = [], no
         onLogout={handleLogout}
         onSearchSubmit={handleSearchSubmit}
       />
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
     </div>
   );
 };

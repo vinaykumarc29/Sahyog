@@ -30,6 +30,10 @@ export const sendMessage = async (req, res) => {
       receiver: req.params.userId,
       content: req.body.content
     });
+
+    const io = req.app.get('io');
+    io.to(req.params.userId).emit('receiveMessage', message);
+
     res.status(201).json(message);
   } catch (err) {
     res.status(500).json({ message: err.message });

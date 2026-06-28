@@ -44,7 +44,7 @@ const WorkspaceGate = ({ children }) => {
 const AppLayout = ({ children }) => {
   const { currentUser, users, teams } = useWorkspace();
   return (
-    <Layout currentUser={currentUser} allUsers={users} allTeams={teams}>
+    <Layout >
       {children}
     </Layout>
   );

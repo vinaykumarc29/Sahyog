@@ -89,18 +89,35 @@ export const Header = ({ currentUser, allUsers, allTeams, notifications = [], ma
             <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
 
                 {/* Brand Logo */}
+
                 <div onClick={() => navigate('/dashboard')} className="flex items-center gap-2.5 cursor-pointer select-none group" id="nav-logo">
-                    <div className="gradient-cta p-2.5 rounded-2xl shadow-md shadow-primary-indigo/20 group-hover:scale-105 transition-transform">
-                        <Sparkles className="w-5 h-5 text-white" />
-                    </div>
+                    {/* Replaced the Sparkles div with your new image */}
+                    <img
+                        src="/logo.jpeg"
+                        alt="Sahayog Icon"
+                        className="h-10 w-10 object-contain group-hover:scale-105 transition-transform"
+                    />
+
+                    {/* Updated text to match the new image branding */}
                     <div>
                         <span className="text-xl font-extrabold tracking-tight text-text-primary font-display flex items-center gap-1">
-                            SAHYOG
+                            SAHAYOG
                             {/* <span className="text-[10px] uppercase font-bold tracking-widest bg-primary-indigo/5 text-primary-indigo px-1.5 py-0.5 rounded-md border border-primary-indigo/10">v1.0</span> */}
                         </span>
-                        <p className="text-[10px] text-text-secondary font-medium tracking-wide">Learn • Build • Collaborate</p>
+                        <p className="text-[10px] text-text-secondary font-medium tracking-wide">SKILL SHARE. GROW TOGETHER.</p>
                     </div>
                 </div>
+
+
+
+
+                {/* <div onClick={() => navigate('/dashboard')} className="flex items-center cursor-pointer select-none group" id="nav-logo">
+                    <img
+                        src="/logo.png"
+                        alt="Sahayog Logo"
+                        className="h-16 w-auto group-hover:scale-105 transition-transform"
+                    />
+                </div> */}
 
                 {/* Global Search Bar */}
                 <div ref={searchRef} className="hidden md:flex flex-1 max-w-md relative" id="global-search-container">

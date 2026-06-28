@@ -2,22 +2,24 @@ import React from 'react';
 import { useWorkspace } from '../context/WorkspaceContext.jsx';
 import api from '../api/axios.js';
 import { Bell, UserPlus, FileCheck, MessageSquare } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 export const NotificationsPage = () => {
     const { currentUser, users: allUsers, reloadWorkspace } = useWorkspace();
+    const navigate = useNavigate();
     const onAcceptConnection = async (senderId) => { await api.put(`/api/users/connect/${senderId}/accept`); await reloadWorkspace(); };
     const onRejectConnection = async (senderId) => { await api.put(`/api/users/connect/${senderId}/reject`); await reloadWorkspace(); };
     const notifications = (currentUser?.pendingRequests || []).map(reqId => {
-        const sender = allUsers.find(u => u.id === reqId);
-        return {
-            id: `conn-${reqId}`,
-            type: 'connection_request',
-            title: 'Connection Request',
-            message: sender ? `${sender.name} wants to connect with you` : 'Someone wants to connect with you',
-            senderId: reqId,
-            isRead: false,
-            timestamp: 'Recently',
-        };
-    });
+    const sender = allUsers.find(u => u.id === String(reqId)); // add String()
+    return {
+        id: `conn-${reqId}`,
+        type: 'connection_request',
+        title: 'Connection Request',
+        message: sender ? `${sender.name} wants to connect with you` : 'Someone wants to connect with you',
+        senderId: String(reqId), // add String()
+        isRead: false,
+        timestamp: 'Recently',
+    };
+});
     const onMarkAllAsRead = () => {};
     const onClearAll = () => {};
     const setActiveTab = () => {};
@@ -98,11 +100,11 @@ export const NotificationsPage = () => {
                   </div>)}
 
                 {/* Direct quick navs */}
-                {notif.type === 'chat_message' && (<button onClick={() => setActiveTab('chat')} className="px-4 py-1.5 bg-primary-indigo/5 hover:bg-primary-indigo/10 text-primary-indigo rounded-lg text-[10px] font-black tracking-wide transition-colors shrink-0">
+                {notif.type === 'chat_message' && (<button onClick={() => navigate('/chat')} className="px-4 py-1.5 bg-primary-indigo/5 hover:bg-primary-indigo/10 text-primary-indigo rounded-lg text-[10px] font-black tracking-wide transition-colors shrink-0">
                     Reply
                   </button>)}
 
-                {notif.type === 'application_approved' && notif.teamId && (<button onClick={() => setActiveTab(`team-${notif.teamId}`)} className="px-4 py-1.5 bg-success-custom/5 hover:bg-success-custom/10 text-success-custom rounded-lg text-[10px] font-black tracking-wide transition-colors shrink-0">
+                {notif.type === 'application_approved' && notif.teamId && (<button onClick={() => navigate(`/teams/${notif.teamId}`)} className="px-4 py-1.5 bg-success-custom/5 hover:bg-success-custom/10 text-success-custom rounded-lg text-[10px] font-black tracking-wide transition-colors shrink-0">
                     Enter Squad
                   </button>)}
 

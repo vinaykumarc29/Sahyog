@@ -54,10 +54,23 @@ export const LoginPage = ({ onLoginSuccess, onNavigateToRegister, onBackToLandin
 
       {/* Floating Logo Shortcut */}
       <div onClick={goToLanding} className="absolute top-8 left-8 flex items-center gap-2 cursor-pointer group z-20">
-        <div className="gradient-cta p-2 rounded-xl group-hover:scale-105 transition-all">
-          <Sparkles className="w-4.5 h-4.5 text-white"/>
-        </div>
-        <span className="font-bold text-sm text-text-primary font-display tracking-tight">SAHYOG</span>
+         <div onClick={() => navigate('/dashboard')} className="flex items-center gap-2.5 cursor-pointer select-none group" id="nav-logo">
+                    {/* Replaced the Sparkles div with your new image */}
+                    <img
+                        src="/logo.jpeg"
+                        alt="Sahayog Icon"
+                        className="h-10 w-10 object-contain group-hover:scale-105 transition-transform"
+                    />
+
+                    {/* Updated text to match the new image branding */}
+                    <div>
+                        <span className="text-xl font-extrabold tracking-tight text-text-primary font-display flex items-center gap-1">
+                            SAHAYOG
+                            {/* <span className="text-[10px] uppercase font-bold tracking-widest bg-primary-indigo/5 text-primary-indigo px-1.5 py-0.5 rounded-md border border-primary-indigo/10">v1.0</span> */}
+                        </span>
+                        <p className="text-[10px] text-text-secondary font-medium tracking-wide">SKILL SHARE. GROW TOGETHER.</p>
+                    </div>
+                </div>
       </div>
 
       {/* Modern glass card */}

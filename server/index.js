@@ -20,6 +20,8 @@ const io = new Server(httpServer, {
   cors: { origin: process.env.CLIENT_URL }
 });
 
+app.set('io', io);
+
 app.use(cors());
 app.use(express.json());
 

@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import api from '../api/axios.js';
 import { useAuth } from './AuthContext.jsx';
 import { normalizeUser, normalizeTeam } from '../api/mappers.js';
+import { io } from 'socket.io-client';
 
 const WorkspaceContext = createContext(null);
 
@@ -13,10 +14,12 @@ export const WorkspaceProvider = ({ children }) => {
   const [teams, setTeams] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
-  const loadWorkspaceData = useCallback(async () => {
+ const loadWorkspaceData = useCallback(async (showLoading = true) => {
     try {
-      setLoading(true);
-      setError('');
+      if (showLoading) {
+        setLoading(true);
+        setError('');
+      }
       const [meRes, usersRes, teamsRes] = await Promise.all([
         api.get('/api/auth/me'),
         api.get('/api/users'),
@@ -30,13 +33,27 @@ export const WorkspaceProvider = ({ children }) => {
     } catch (err) {
       setError(err.response?.data?.message || 'Could not load data from the backend.');
     } finally {
-      setLoading(false);
+      if (showLoading) setLoading(false);
     }
   }, [login]);
 
-  useEffect(() => {
-    if (user) loadWorkspaceData();
-  }, [user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
+useEffect(() => {
+  if (!user) return;
+
+  loadWorkspaceData(true); // initial load
+
+  const socket = io(import.meta.env.VITE_API_URL);
+  socket.emit('joinRoom', String(user._id));
+
+  // any of these fire → load() → all components update
+socket.on('connectionRequest',  () => loadWorkspaceData(false));
+socket.on('connectionAccepted', () => loadWorkspaceData(false));
+socket.on('connectionRejected', () => loadWorkspaceData(false));
+socket.on('teamUpdated',        () => loadWorkspaceData(false));
+socket.on('receiveMessage', loadWorkspaceData);
+
+  return () => socket.disconnect();
+}, [user?._id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <WorkspaceContext.Provider
