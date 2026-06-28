@@ -24,12 +24,21 @@ connectDB();
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: { origin: process.env.CLIENT_URL }
+  cors: {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  },
 });
 
 app.set('io', io);
 
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
@@ -45,6 +54,9 @@ app.use('/api/admin/teams', adminTeamRoutes);
 app.use('/api/admin/skills', adminSkillRoutes);
 socketHandler(io);
 
-httpServer.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+
+const PORT = process.env.PORT || 5000;
+
+httpServer.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
