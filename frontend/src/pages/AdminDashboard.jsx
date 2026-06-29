@@ -56,7 +56,34 @@ export function AdminDashboard() {
         <div className="flex flex-col h-full">
           {/* Logo Brand area */}
           <div className="p-6 border-b border-slate-50 flex justify-between items-center">
-            <div className="flex items-center gap-2.5">
+
+             <div onClick={() => setActiveTab('Dashboard')} className="flex items-center gap-2.5 cursor-pointer select-none group" id="nav-logo">
+          {/* Replaced the Sparkles div with your new image */}
+          <img
+            src="/logo.jpeg"
+            alt="Sahyog Icon"
+            className="h-10 w-10 object-contain group-hover:scale-105 transition-transform"
+          />
+
+          {/* Updated text to match the new image branding */}
+          <div>
+            <span className="text-base md:text-xl font-extrabold tracking-tight text-text-primary font-display flex items-center gap-1">
+              SAHYOG
+              {/* <span className="text-[10px] uppercase font-bold tracking-widest bg-primary-indigo/5 text-primary-indigo px-1.5 py-0.5 rounded-md border border-primary-indigo/10">v1.0</span> */}
+            </span>
+            <p className="text-[10px] text-text-secondary font-medium tracking-wide">SKILL SHARE. GROW TOGETHER.</p>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+            {/* <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 bg-indigo-600 rounded-xl flex items-center justify-center font-heading font-black text-white text-base shadow-md shadow-indigo-100/50">
                 S
               </div>
@@ -64,7 +91,7 @@ export function AdminDashboard() {
                 <span className="font-heading font-extrabold text-slate-800 tracking-tight text-base block">Sahyog Admin</span>
                 <span className="text-[10px] text-indigo-500 font-bold tracking-wider uppercase">Portal Console</span>
               </div>
-            </div>
+            </div> */}
 
             <button
               onClick={() => setSidebarOpen(false)}

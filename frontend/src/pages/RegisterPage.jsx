@@ -265,7 +265,7 @@ export const RegisterPage = ({ onRegisterSuccess, onNavigateToLogin }) => {
                 <select value={college} onChange={(e) => setCollege(e.target.value)} className="w-full px-4 py-3.5 bg-sahyog-bg/60 rounded-2xl border border-outline-custom/40 focus:outline-none focus:ring-1 focus:ring-primary-indigo text-xs text-text-primary cursor-pointer">
                   <option value="Vivekanada Government college">Vivekanada Government college</option>
                   <option value="IIT Bombay">IIT Bombay</option>
-                  <option value="UC Berkeley">City college hyderabad</option>
+                  <option value="City college hyderabad">City college hyderabad</option>
                   <option value="Massachusetts Institute of Technology">Massachusetts Institute of Technology</option>
                   <option value="University of Oxford">University of Oxford</option>
                   <option value="Ashesi University">Ashesi University</option>
