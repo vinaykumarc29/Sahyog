@@ -2,14 +2,53 @@ import { useState, useEffect, useRef } from 'react';
 import { Send, Search, MessageSquare, ArrowLeft, Loader2 } from 'lucide-react';
 import { useChat } from '../hooks/useChat.js';
 import { useWorkspace } from '../context/WorkspaceContext.jsx';
+import { useSocket } from '../context/SocketContext.jsx';
+import { getConversationsApi } from '../api/messageApi.js';
 
 export const ChatPage = () => {
     const { currentUser, users: allUsers } = useWorkspace();
+    const { socket } = useSocket();
     const [activePartnerId, setActivePartnerId] = useState('');
     const [typedMessage, setTypedMessage] = useState('');
     const [searchSidebarQuery, setSearchSidebarQuery] = useState('');
     const [showMobileList, setShowMobileList] = useState(true);
+    const [lastMessageTimes, setLastMessageTimes] = useState({});
     const messageEndRef = useRef(null);
+
+    // Fetch conversation history order on mount
+    useEffect(() => {
+        const fetchConversations = async () => {
+            try {
+                const res = await getConversationsApi();
+                const times = {};
+                res.data.forEach(c => {
+                    times[c.partnerId] = new Date(c.lastMessageAt).getTime();
+                });
+                setLastMessageTimes(times);
+            } catch (err) {
+                console.error("Failed to load conversations:", err);
+            }
+        };
+        fetchConversations();
+    }, []);
+
+    // Listen for real-time messages to update sorting order
+    useEffect(() => {
+        if (!socket) return;
+        const handleReceive = (msg) => {
+            const senderId = msg.sender?._id || msg.sender || msg.senderId;
+            const receiverId = msg.receiver?._id || msg.receiver || msg.receiverId;
+            const partnerId = senderId === currentUser.id ? receiverId : senderId;
+            if (senderId === currentUser.id || receiverId === currentUser.id) {
+                setLastMessageTimes(prev => ({
+                    ...prev,
+                    [partnerId]: Date.now()
+                }));
+            }
+        };
+        socket.on('receiveMessage', handleReceive);
+        return () => socket.off('receiveMessage', handleReceive);
+    }, [socket, currentUser.id]);
 
     // Filter connections who can be chatted with
     const connectedUsers = (allUsers || []).filter(u =>
@@ -19,20 +58,27 @@ export const ChatPage = () => {
         ? connectedUsers
         : (allUsers || []).filter(u => u.id !== currentUser.id).slice(0, 4);
 
-    const filteredChatPartners = connectionsForChat.filter(u =>
+    // Sort connections by last message timestamp (descending)
+    const sortedConnections = [...connectionsForChat].sort((a, b) => {
+        const timeA = lastMessageTimes[a.id] || 0;
+        const timeB = lastMessageTimes[b.id] || 0;
+        return timeB - timeA;
+    });
+
+    const filteredChatPartners = sortedConnections.filter(u =>
         u.name.toLowerCase().includes(searchSidebarQuery.toLowerCase()) ||
         (u.college || '').toLowerCase().includes(searchSidebarQuery.toLowerCase())
     );
 
     // Set default partner
     useEffect(() => {
-        if (!activePartnerId && connectionsForChat[0]) {
+        if (!activePartnerId && sortedConnections[0]) {
             // eslint-disable-next-line react-hooks/set-state-in-effect
-            setActivePartnerId(connectionsForChat[0].id);
+            setActivePartnerId(sortedConnections[0].id);
         }
-    }, [activePartnerId, connectionsForChat]);
+    }, [activePartnerId, sortedConnections]);
 
-    const activePartner = (allUsers || []).find(u => u.id === activePartnerId) || connectionsForChat[0];
+    const activePartner = (allUsers || []).find(u => u.id === activePartnerId) || sortedConnections[0];
 
     // Real-time chat using useChat hook
     const { messages, loading: messagesLoading, sendMessage } = useChat(
@@ -53,6 +99,11 @@ export const ChatPage = () => {
         try {
             await sendMessage(activePartner.id, typedMessage.trim());
             setTypedMessage('');
+            // Update last message time for active partner immediately
+            setLastMessageTimes(prev => ({
+                ...prev,
+                [activePartner.id]: Date.now()
+            }));
         } catch {
             // ignore — useChat handles errors internally
         }

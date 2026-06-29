@@ -9,3 +9,7 @@ export const sendMessageApi = (userId, content) =>
 // Returns { count: number, lastMessageAt: string | null }
 export const getUnreadCountApi = () =>
   api.get('/api/messages/unread-count');
+
+export const getConversationsApi = () =>
+  api.get('/api/messages/conversations');
+

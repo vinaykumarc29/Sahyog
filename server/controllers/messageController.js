@@ -62,3 +62,38 @@ export const getUnreadCount = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// GET /api/messages/conversations — fetch latest message details for all unique chat partners
+export const getConversations = async (req, res) => {
+  try {
+    const messages = await Message.find({
+      $or: [
+        { sender: req.user.id },
+        { receiver: req.user.id }
+      ]
+    }).sort({ createdAt: -1 });
+
+    const conversations = [];
+    const seenPartners = new Set();
+
+    messages.forEach(msg => {
+      const partnerId = msg.sender.toString() === req.user.id
+        ? msg.receiver.toString()
+        : msg.sender.toString();
+
+      if (!seenPartners.has(partnerId)) {
+        seenPartners.add(partnerId);
+        conversations.push({
+          partnerId,
+          lastMessageAt: msg.createdAt,
+          lastMessageContent: msg.content,
+          sender: msg.sender.toString(),
+        });
+      }
+    });
+
+    res.json(conversations);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

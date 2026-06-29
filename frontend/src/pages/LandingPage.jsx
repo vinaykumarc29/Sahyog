@@ -17,14 +17,14 @@ export const LandingPage = ({ onStartOnboarding, onLogin }) => {
           {/* Replaced the Sparkles div with your new image */}
           <img
             src="/logo.jpeg"
-            alt="Sahayog Icon"
+            alt="Sahyog Icon"
             className="h-10 w-10 object-contain group-hover:scale-105 transition-transform"
           />
 
           {/* Updated text to match the new image branding */}
           <div>
             <span className="text-base md:text-xl font-extrabold tracking-tight text-text-primary font-display flex items-center gap-1">
-              SAHAYOG
+              SAHYOG
               {/* <span className="text-[10px] uppercase font-bold tracking-widest bg-primary-indigo/5 text-primary-indigo px-1.5 py-0.5 rounded-md border border-primary-indigo/10">v1.0</span> */}
             </span>
             <p className="text-[10px] text-text-secondary font-medium tracking-wide">SKILL SHARE. GROW TOGETHER.</p>
